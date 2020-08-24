@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import UserSection from "./UserSection";
+import "./App.css";
 
 function App() {
+  const [username, setUsername] = useState("");
+  const [data, setData] = useState(null);
+
+  function handleChange(ev) {
+    setUsername(ev.target.value);
+  }
+
+  function handleSubmit(ev) {
+    fetch(`https://api.github.com/users/${username}`)
+      .then((res) => res.json())
+      .then(setData);
+    ev.preventDefault();
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1 style={{ alignSelf: "center" }}>Search GitHub Profiles</h1>
+      <input
+        placeholder="Github username"
+        type="text"
+        value={username}
+        onChange={handleChange}
+      />
+      <button disabled={!Boolean(username)} onClick={handleSubmit}>
+        Submit
+      </button>
+      {data && <UserSection user={data} />}
     </div>
   );
 }
